@@ -64,8 +64,6 @@ Desktop.ini
 coverage/
 *.log
 vgcore.*
-core
-core.*
 
 # Valgrind output
 valgrind-out.txt
