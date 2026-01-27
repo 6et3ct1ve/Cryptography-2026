@@ -24,7 +24,7 @@
  * @param ciphertext Pointer to output buffer.
  * @return CRYPTO_SUCCESS on success, error code otherwise.
  */
-enum crypto_status encrypt_polybius(const char* plaintext, int key, char** ciphertext);
+enum crypto_status encrypt_polybius(const char* plaintext, char** ciphertext);
 
 /**
  * @brief Decrypts ciphertext using Polybius square.
@@ -37,6 +37,6 @@ enum crypto_status encrypt_polybius(const char* plaintext, int key, char** ciphe
  * @param plaintext Pointer to output buffer.
  * @return CRYPTO_SUCCESS on success, error code otherwise.
  */
-enum crypto_status decrypt_polybius(const char* ciphertext, int key, char** plaintext);
+enum crypto_status decrypt_polybius(const char* ciphertext, char** plaintext);
 
 #endif
