@@ -12,5 +12,8 @@
 #include "crypto/caesar.h"
 #include "crypto/trithemius.h"
 #include "crypto/polybius.h"
+#include "crypto/vigenere.h"
+#include "crypto/vernam.h"
+#include "crypto/gamma.h"
 
 #endif
