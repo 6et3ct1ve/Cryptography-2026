@@ -2,7 +2,7 @@
 #include <check.h>
 #include <stdlib.h>
 
-START_TEST(test_encrypt_basic) 
+START_TEST(test_encrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -17,7 +17,7 @@ START_TEST(test_encrypt_basic)
 } 
 END_TEST
 
-START_TEST(test_decrypt_basic) 
+START_TEST(test_decrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -32,7 +32,7 @@ START_TEST(test_decrypt_basic)
 } 
 END_TEST
 
-START_TEST(test_wraparound) 
+START_TEST(test_wraparound)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -47,7 +47,7 @@ START_TEST(test_wraparound)
 } 
 END_TEST
 
-START_TEST(test_negative_key) 
+START_TEST(test_negative_key)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -62,7 +62,7 @@ START_TEST(test_negative_key)
 } 
 END_TEST
 
-START_TEST(test_large_key) 
+START_TEST(test_large_key)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -77,7 +77,7 @@ START_TEST(test_large_key)
 } 
 END_TEST
 
-START_TEST(test_non_letters) 
+START_TEST(test_non_letters)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -92,7 +92,7 @@ START_TEST(test_non_letters)
 } 
 END_TEST
 
-START_TEST(test_null_input) 
+START_TEST(test_null_input)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -105,7 +105,7 @@ START_TEST(test_null_input)
 } 
 END_TEST
 
-START_TEST(test_case_preservation) 
+START_TEST(test_case_preservation)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -120,7 +120,7 @@ START_TEST(test_case_preservation)
 } 
 END_TEST
 
-Suite* caesar_suite(void) 
+Suite* caesar_suite(void)
 {
     Suite* s;
     TCase* tc_core;
@@ -142,7 +142,7 @@ Suite* caesar_suite(void)
     return s;
 }
 
-int main(void) 
+int main(void)
 {
     int number_failed;
     Suite* s;

@@ -13,7 +13,7 @@
  * @param c Character to check
  * @return 1 if letter (A-Z or a-z), 0 otherwise
  */
-static int is_letter(char c) 
+static int is_letter(char c)
 {
     return ((unsigned char)((c | 32) - 'a')) < 26;
 }
@@ -29,7 +29,7 @@ static int is_letter(char c)
  * @param key Shift amount (any integer)
  * @return Shifted character with same case
  */
-static char shift_char(char c, int key) 
+static char shift_char(char c, int key)
 {
     key = ((key % 26) + 26) % 26;
     char base = 'A' + (c & 32);
@@ -47,21 +47,21 @@ static char shift_char(char c, int key)
  * @param ciphertext Output pointer for encrypted text (caller must free)
  * @return CRYPTO_SUCCESS on success, error code otherwise
  */
-enum crypto_status encrypt_trithemius(const char* plaintext, int key, char** ciphertext) 
+enum crypto_status encrypt_trithemius(const char* plaintext, int key, char** ciphertext)
 {
-    if (!plaintext || !ciphertext) 
+    if (!plaintext || !ciphertext)
         return CRYPTO_ERROR_NULL_POINTER;
     
     size_t len = strlen(plaintext);
     char* result = (char*)malloc(len + 1);
-    if (!result) 
+    if (!result)
         return CRYPTO_ERROR_MEMORY;
     
     size_t letter_pos = 0;
     
-    for (size_t i = 0; i < len; i++) 
+    for (size_t i = 0; i < len; i++)
     {
-        if (is_letter(plaintext[i])) 
+        if (is_letter(plaintext[i]))
         {
             result[i] = shift_char(plaintext[i], key + letter_pos);
             letter_pos++;
@@ -86,21 +86,21 @@ enum crypto_status encrypt_trithemius(const char* plaintext, int key, char** cip
  * @param plaintext Output pointer for decrypted text (caller must free)
  * @return CRYPTO_SUCCESS on success, error code otherwise
  */
-enum crypto_status decrypt_trithemius(const char* ciphertext, int key, char** plaintext) 
+enum crypto_status decrypt_trithemius(const char* ciphertext, int key, char** plaintext)
 {
-    if (!ciphertext || !plaintext) 
+    if (!ciphertext || !plaintext)
         return CRYPTO_ERROR_NULL_POINTER;
     
     size_t len = strlen(ciphertext);
     char* result = (char*)malloc(len + 1);
-    if (!result) 
+    if (!result)
         return CRYPTO_ERROR_MEMORY;
     
     size_t letter_pos = 0;
     
-    for (size_t i = 0; i < len; i++) 
+    for (size_t i = 0; i < len; i++)
     {
-        if (is_letter(ciphertext[i])) 
+        if (is_letter(ciphertext[i]))
         {
             result[i] = shift_char(ciphertext[i], -(key + letter_pos));
             letter_pos++;

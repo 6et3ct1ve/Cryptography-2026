@@ -10,7 +10,7 @@
  * @param col Output: column coordinate (1-5)
  * @return 1 if valid letter, 0 otherwise
  */
-static int letter_to_coords(char letter, int* row, int* col) 
+static int letter_to_coords(char letter, int* row, int* col)
 {
     if (((unsigned char)((letter | 32) - 'a')) >= 26)
         return 0;
@@ -34,7 +34,7 @@ static int letter_to_coords(char letter, int* row, int* col)
  * @param col Column coordinate (1-5)
  * @return Letter at position, or '\0' if invalid
  */
-static char coords_to_letter(int row, int col) 
+static char coords_to_letter(int row, int col)
 {
     unsigned int r = (unsigned int)(row - 1);
     unsigned int c = (unsigned int)(col - 1);
@@ -60,13 +60,13 @@ static char coords_to_letter(int row, int col)
  * @param ciphertext Output pointer (caller must free)
  * @return Status code
  */
-enum crypto_status encrypt_polybius(const char* plaintext, char** ciphertext) 
+enum crypto_status encrypt_polybius(const char* plaintext, char** ciphertext)
 {
-    if (!plaintext || !ciphertext) 
+    if (!plaintext || !ciphertext)
         return CRYPTO_ERROR_NULL_POINTER;
     
     size_t letter_count = 0;
-    for (size_t i = 0; plaintext[i]; i++) 
+    for (size_t i = 0; plaintext[i]; i++)
     {
         int row, col;
         if (letter_to_coords(plaintext[i], &row, &col))
@@ -75,14 +75,14 @@ enum crypto_status encrypt_polybius(const char* plaintext, char** ciphertext)
     
     size_t output_size = letter_count * 2 + 1;
     char* result = (char*)malloc(output_size);
-    if (!result) 
+    if (!result)
         return CRYPTO_ERROR_MEMORY;
     
     size_t pos = 0;
-    for (size_t i = 0; plaintext[i]; i++) 
+    for (size_t i = 0; plaintext[i]; i++)
     {
         int row, col;
-        if (letter_to_coords(plaintext[i], &row, &col)) 
+        if (letter_to_coords(plaintext[i], &row, &col))
         {
             result[pos++] = '0' + row;
             result[pos++] = '0' + col;
@@ -105,9 +105,9 @@ enum crypto_status encrypt_polybius(const char* plaintext, char** ciphertext)
  * @param plaintext Output pointer (caller must free)
  * @return Status code
  */
-enum crypto_status decrypt_polybius(const char* ciphertext, char** plaintext) 
+enum crypto_status decrypt_polybius(const char* ciphertext, char** plaintext)
 {
-    if (!ciphertext || !plaintext) 
+    if (!ciphertext || !plaintext)
         return CRYPTO_ERROR_NULL_POINTER;
     
     size_t len = strlen(ciphertext);
@@ -117,14 +117,14 @@ enum crypto_status decrypt_polybius(const char* ciphertext, char** plaintext)
     
     size_t output_size = len / 2 + 1;
     char* result = (char*)malloc(output_size);
-    if (!result) 
+    if (!result)
         return CRYPTO_ERROR_MEMORY;
     
     size_t pos = 0;
-    for (size_t i = 0; i < len; i += 2) 
+    for (size_t i = 0; i < len; i += 2)
     {
         if (ciphertext[i] < '1' || ciphertext[i] > '5' ||
-            ciphertext[i+1] < '1' || ciphertext[i+1] > '5') 
+            ciphertext[i+1] < '1' || ciphertext[i+1] > '5')
         {
             free(result);
             return CRYPTO_ERROR_INVALID_INPUT;
@@ -134,7 +134,7 @@ enum crypto_status decrypt_polybius(const char* ciphertext, char** plaintext)
         int col = ciphertext[i+1] - '0';
         
         char letter = coords_to_letter(row, col);
-        if (letter == '\0') 
+        if (letter == '\0')
         {
             free(result);
             return CRYPTO_ERROR_INVALID_INPUT;

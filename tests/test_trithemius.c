@@ -14,7 +14,7 @@
 /**
  * @brief Test basic encryption with progressive shift
  */
-START_TEST(test_encrypt_basic) 
+START_TEST(test_encrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -32,7 +32,7 @@ END_TEST
 /**
  * @brief Test basic decryption
  */
-START_TEST(test_decrypt_basic) 
+START_TEST(test_decrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -50,7 +50,7 @@ END_TEST
 /**
  * @brief Test progressive shift starting from 0
  */
-START_TEST(test_progressive_shift) 
+START_TEST(test_progressive_shift)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -68,7 +68,7 @@ END_TEST
 /**
  * @brief Test that spaces don't affect letter position counter
  */
-START_TEST(test_with_spaces) 
+START_TEST(test_with_spaces)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -86,7 +86,7 @@ END_TEST
 /**
  * @brief Test wraparound (Z->A)
  */
-START_TEST(test_wraparound) 
+START_TEST(test_wraparound)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -104,7 +104,7 @@ END_TEST
 /**
  * @brief Test negative key
  */
-START_TEST(test_negative_key) 
+START_TEST(test_negative_key)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -122,7 +122,7 @@ END_TEST
 /**
  * @brief Test NULL input handling
  */
-START_TEST(test_null_input) 
+START_TEST(test_null_input)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -138,7 +138,7 @@ END_TEST
 /**
  * @brief Test uppercase/lowercase preservation
  */
-START_TEST(test_case_preservation) 
+START_TEST(test_case_preservation)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -156,7 +156,7 @@ END_TEST
 /**
  * @brief Create test suite
  */
-Suite* trithemius_suite(void) 
+Suite* trithemius_suite(void)
 {
     Suite* s;
     TCase* tc_core;
@@ -181,7 +181,7 @@ Suite* trithemius_suite(void)
 /**
  * @brief Main test runner
  */
-int main(void) 
+int main(void)
 {
     int number_failed;
     Suite* s;

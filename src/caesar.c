@@ -13,7 +13,7 @@
  * @param c Character to check
  * @return 1 if letter (A-Z or a-z), 0 otherwise
  */
-static int is_letter(char c) 
+static int is_letter(char c)
 {
     return ((unsigned char)((c | 32) - 'a')) < 26;
 }
@@ -29,7 +29,7 @@ static int is_letter(char c)
  * @param key Shift amount (any integer)
  * @return Shifted character with same case
  */
-static char shift_char(char c, int key) 
+static char shift_char(char c, int key)
 {
     key = ((key % 26) + 26) % 26;
 
@@ -38,21 +38,21 @@ static char shift_char(char c, int key)
     return (c - base + key) % 26 + base;
 }
 
-enum crypto_status encrypt_caesar(const char* plaintext, int key, char** ciphertext) 
+enum crypto_status encrypt_caesar(const char* plaintext, int key, char** ciphertext)
 {
-    if (!plaintext || !ciphertext) 
+    if (!plaintext || !ciphertext)
         return CRYPTO_ERROR_NULL_POINTER;
     
     size_t len = strlen(plaintext);
     
     char* result = (char*)malloc(len + 1);
-    if (!result) 
+    if (!result)
         return CRYPTO_ERROR_MEMORY;
     
 
-    for (size_t i = 0; i < len; i++) 
+    for (size_t i = 0; i < len; i++)
     {
-        if (is_letter(plaintext[i])) 
+        if (is_letter(plaintext[i]))
             result[i] = shift_char(plaintext[i], key);
         else  
             result[i] = plaintext[i];
@@ -65,7 +65,7 @@ enum crypto_status encrypt_caesar(const char* plaintext, int key, char** ciphert
     return CRYPTO_SUCCESS;
 }
 
-enum crypto_status decrypt_caesar(const char* ciphertext, int key, char** plaintext) 
+enum crypto_status decrypt_caesar(const char* ciphertext, int key, char** plaintext)
 {
     return encrypt_caesar(ciphertext, -key, plaintext);
 }

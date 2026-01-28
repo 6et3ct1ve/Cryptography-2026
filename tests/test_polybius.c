@@ -14,7 +14,7 @@
 /**
  * @brief Test basic encryption
  */
-START_TEST(test_encrypt_basic) 
+START_TEST(test_encrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -32,7 +32,7 @@ END_TEST
 /**
  * @brief Test basic decryption
  */
-START_TEST(test_decrypt_basic) 
+START_TEST(test_decrypt_basic)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -50,7 +50,7 @@ END_TEST
 /**
  * @brief Test J→I conversion
  */
-START_TEST(test_j_to_i) 
+START_TEST(test_j_to_i)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -74,7 +74,7 @@ END_TEST
 /**
  * @brief Test case insensitive encryption
  */
-START_TEST(test_case_insensitive) 
+START_TEST(test_case_insensitive)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -92,7 +92,7 @@ END_TEST
 /**
  * @brief Test non-letters are ignored
  */
-START_TEST(test_non_letters) 
+START_TEST(test_non_letters)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -110,7 +110,7 @@ END_TEST
 /**
  * @brief Test odd-length ciphertext error
  */
-START_TEST(test_odd_length) 
+START_TEST(test_odd_length)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -124,7 +124,7 @@ END_TEST
 /**
  * @brief Test invalid digits (not 1-5)
  */
-START_TEST(test_invalid_digits) 
+START_TEST(test_invalid_digits)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -142,7 +142,7 @@ END_TEST
 /**
  * @brief Test NULL input handling
  */
-START_TEST(test_null_input) 
+START_TEST(test_null_input)
 {
     char* result = NULL;
     enum crypto_status status;
@@ -158,7 +158,7 @@ END_TEST
 /**
  * @brief Create test suite
  */
-Suite* polybius_suite(void) 
+Suite* polybius_suite(void)
 {
     Suite* s;
     TCase* tc_core;
@@ -183,7 +183,7 @@ Suite* polybius_suite(void)
 /**
  * @brief Main test runner
  */
-int main(void) 
+int main(void)
 {
     int number_failed;
     Suite* s;

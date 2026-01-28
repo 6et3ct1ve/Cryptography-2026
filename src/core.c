@@ -1,8 +1,8 @@
 #include "crypto/core.h"
 
-const char* crypto_status_output(enum crypto_status status) 
+const char* crypto_status_output(enum crypto_status status)
 {
-    switch (status) 
+    switch (status)
     {
         case CRYPTO_SUCCESS:
             return "Success";
