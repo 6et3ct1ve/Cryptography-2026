@@ -34,6 +34,7 @@ void print_menu()
     printf("3. Polybius cipher\n");
     printf("4. Vigenere cipher\n");
     printf("5. Verham ciphere\n");
+    printf("6. Gamma ciphere\n");
     printf("0. Exit\n");
     printf("Select cipher>");
 }
@@ -300,7 +301,7 @@ void vernam_menu()
         return;
     }
 
-    printf("Enter key> ");
+    printf("Enter key>");
     if (!fgets(key, MAX_INPUT, stdin))
     {
         printf("Failed to read key!\n");
@@ -313,7 +314,7 @@ void vernam_menu()
 
     if (action == 1)
     {
-        printf("Enter text> ");
+        printf("Enter text>");
         if (!fgets(input, MAX_INPUT, stdin))
         {
             printf("Failed to read input!\n");
@@ -339,7 +340,7 @@ void vernam_menu()
     }
     else 
     {
-        printf("Enter hex (no spaces, e.g. 1F0A07)> ");
+        printf("Enter hex (no spaces, e.g. 1F0A07)>");
         if (!fgets(input, MAX_INPUT, stdin))
         {
             printf("Failed to read input!\n");
@@ -371,6 +372,128 @@ void vernam_menu()
         }
 
         status = decrypt_vernam(data, data_len, (unsigned char*)key, key_len, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (text): ");
+            for (size_t i = 0; i < data_len; i++)
+                printf("%c", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else 
+            printf("\nError: %s\n", crypto_status_output(status));
+
+        free(data);
+    }
+}
+
+void gamma_menu()
+{
+    int action;
+    char input[MAX_INPUT];
+    uint32_t seed;
+    unsigned char* result = NULL;
+    enum crypto_status status;
+
+    printf("\n--- Gamma Cipher (Block Transposition) ---\n");
+    printf("1. Encrypt (text → hex)\n");
+    printf("2. Decrypt (hex → text)\n");
+    printf("Select action> ");
+
+    if (scanf("%d", &action) != 1)
+    {
+        printf("Invalid input!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (action != 1 && action != 2)
+    {
+        printf("Invalid action!\n");
+        return;
+    }
+
+    if (action == 1)
+    {
+        printf("Enter text>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t len = strlen(input);
+        if (len > 0 && input[len-1] == '\n')
+            input[len-1] = '\0';
+        len = strlen(input);
+
+        printf("Enter seed>");
+        if (scanf("%u", &seed) != 1)
+        {
+            printf("Invalid seed!\n");
+            clear_input_buffer();
+            return;
+        }
+        clear_input_buffer();
+
+        status = encrypt_gamma((unsigned char*)input, len, seed, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (hex): ");
+            for (size_t i = 0; i < len; i++)
+                printf("%02X", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else 
+            printf("\nError: %s\n", crypto_status_output(status));
+    }
+    else 
+    {
+        printf("Enter hex (no spaces, e.g. 1F0A07)>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t hex_len = strlen(input);
+        if (hex_len > 0 && input[hex_len-1] == '\n')
+            input[hex_len-1] = '\0';
+        hex_len = strlen(input);
+
+        if (hex_len % 2 != 0)
+        {
+            printf("Invalid hex: length must be even!\n");
+            return;
+        }
+
+        size_t data_len = hex_len / 2;
+        unsigned char* data = (unsigned char*)malloc(data_len);
+        if (!data)
+        {
+            printf("Memory error!\n");
+            return;
+        }
+
+        for (size_t i = 0; i < data_len; i++)
+        {
+            char byte_str[3] = {input[i*2], input[i*2+1], '\0'};
+            data[i] = (unsigned char)strtol(byte_str, NULL, 16);
+        }
+
+        printf("Enter seed>");
+        if (scanf("%u", &seed) != 1)
+        {
+            printf("Invalid seed!\n");
+            clear_input_buffer();
+            free(data);
+            return;
+        }
+        clear_input_buffer();
+
+        status = decrypt_gamma(data, data_len, seed, &result);
 
         if (status == CRYPTO_SUCCESS)
         {
@@ -422,6 +545,7 @@ int main()
                 vernam_menu();
                 break;
             case 6:
+                gamma_menu();
                 break;
             case 0:
                 printf("\nExiting...\n");
