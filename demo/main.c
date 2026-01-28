@@ -62,7 +62,7 @@ void caesar_menu()
         return;
     }
 
-    printf("Enter key> ");
+    printf("Enter key>");
     if (scanf("%d", &key) != 1) 
     {
         printf("Invalid key!\n");
