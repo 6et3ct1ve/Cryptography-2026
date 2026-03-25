@@ -35,6 +35,7 @@ void print_menu()
     printf("4. Vigenere cipher\n");
     printf("5. Verham ciphere\n");
     printf("6. Gamma ciphere\n");
+    printf("7. OTP cipher\n");
     printf("0. Exit\n");
     printf("Select cipher>");
 }
@@ -510,6 +511,147 @@ void gamma_menu()
     }
 }
 
+void otp_menu()
+{
+    char input[MAX_INPUT];
+    char key[MAX_INPUT];
+    unsigned char* result = NULL;
+    enum crypto_status status;
+
+    printf("\n--- One-Time Pad ---\n");
+    printf("Note: XOR cipher, key must be >= message length\n");
+    printf("1. Encrypt (text -> hex)\n");
+    printf("2. Decrypt (hex -> text)\n");
+    printf("Select action> ");
+
+    int action;
+    if (scanf("%d", &action) != 1)
+    {
+        printf("Invalid input!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (action != 1 && action != 2)
+    {
+        printf("Invalid action!\n");
+        return;
+    }
+
+    printf("Enter key (hex, no spaces e.g. 1F0A07)>");
+    if (!fgets(key, MAX_INPUT, stdin))
+    {
+        printf("Failed to read key!\n");
+        return;
+    }
+    size_t key_len_hex = strlen(key);
+    if (key_len_hex > 0 && key[key_len_hex-1] == '\n')
+        key[key_len_hex-1] = '\0';
+    key_len_hex = strlen(key);
+
+    if (key_len_hex % 2 != 0)
+    {
+        printf("Invalid key: length must be even!\n");
+        return;
+    }
+
+    size_t key_len = key_len_hex / 2;
+    unsigned char* key_bytes = (unsigned char*)malloc(key_len);
+    if (!key_bytes)
+    {
+        printf("Memory error!\n");
+        return;
+    }
+
+    for (size_t i = 0; i < key_len; i++)
+    {
+        char byte_str[3] = {key[i*2], key[i*2+1], '\0'};
+        key_bytes[i] = (unsigned char)strtol(byte_str, NULL, 16);
+    }
+
+    if (action == 1)
+    {
+        printf("Enter text>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            free(key_bytes);
+            return;
+        }
+        size_t len = strlen(input);
+        if (len > 0 && input[len-1] == '\n')
+            input[len-1] = '\0';
+        len = strlen(input);
+
+        status = otp_crypt((unsigned char*)input, len, key_bytes, key_len, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (hex): ");
+            for (size_t i = 0; i < len; i++)
+                printf("%02X", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+    }
+    else
+    {
+        printf("Enter hex (no spaces, e.g. 1F0A07)>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            free(key_bytes);
+            return;
+        }
+        size_t hex_len = strlen(input);
+        if (hex_len > 0 && input[hex_len-1] == '\n')
+            input[hex_len-1] = '\0';
+        hex_len = strlen(input);
+
+        if (hex_len % 2 != 0)
+        {
+            printf("Invalid hex: length must be even!\n");
+            free(key_bytes);
+            return;
+        }
+
+        size_t data_len = hex_len / 2;
+        unsigned char* data = (unsigned char*)malloc(data_len);
+        if (!data)
+        {
+            printf("Memory error!\n");
+            free(key_bytes);
+            return;
+        }
+
+        for (size_t i = 0; i < data_len; i++)
+        {
+            char byte_str[3] = {input[i*2], input[i*2+1], '\0'};
+            data[i] = (unsigned char)strtol(byte_str, NULL, 16);
+        }
+
+        status = otp_crypt(data, data_len, key_bytes, key_len, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (text): ");
+            for (size_t i = 0; i < data_len; i++)
+                printf("%c", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+
+        free(data);
+    }
+
+    free(key_bytes);
+}
+
 int main()
 {
     int choice;
@@ -546,6 +688,9 @@ int main()
                 break;
             case 6:
                 gamma_menu();
+                break;
+            case 7:
+                otp_menu();
                 break;
             case 0:
                 printf("\nExiting...\n");

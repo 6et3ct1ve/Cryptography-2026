@@ -15,5 +15,6 @@
 #include "crypto/vigenere.h"
 #include "crypto/vernam.h"
 #include "crypto/gamma.h"
+#include "crypto/otp.h"
 
 #endif
