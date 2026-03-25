@@ -1,5 +1,5 @@
-#ifndef OTP_H
-#define OTP_H
+#ifndef CRYPTO_OTP_H
+#define CRYPTO_OTP_H
 
 #include "core.h"
 #include <stddef.h>

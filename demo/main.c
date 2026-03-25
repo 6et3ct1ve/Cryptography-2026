@@ -36,6 +36,8 @@ void print_menu()
     printf("5. Verham ciphere\n");
     printf("6. Gamma ciphere\n");
     printf("7. OTP cipher\n");
+    printf("8. LCG cipher\n");
+    printf("9. RC4 cipher\n");
     printf("0. Exit\n");
     printf("Select cipher>");
 }
@@ -652,6 +654,271 @@ void otp_menu()
     free(key_bytes);
 }
 
+void lcg_menu()
+{
+    char input[MAX_INPUT];
+    unsigned char* result = NULL;
+    enum crypto_status status;
+    uint64_t x0, a, d, m;
+
+    printf("\n--- LCG Stream Cipher ---\n");
+    printf("Keystream: x[i+1] = (a * x_i + d) mod m\n");
+    printf("1. Encrypt (text -> hex)\n");
+    printf("2. Decrypt (hex -> text)\n");
+    printf("Select action> ");
+
+    int action;
+    if (scanf("%d", &action) != 1)
+    {
+        printf("Invalid input!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (action != 1 && action != 2)
+    {
+        printf("Invalid action!\n");
+        return;
+    }
+
+    printf("Enter x0 (seed)>");
+    if (scanf("%llu", (unsigned long long*)&x0) != 1)
+    {
+        printf("Invalid x0!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Enter a (multiplier)>");
+    if (scanf("%llu", (unsigned long long*)&a) != 1)
+    {
+        printf("Invalid a!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Enter d (increment)>");
+    if (scanf("%llu", (unsigned long long*)&d) != 1)
+    {
+        printf("Invalid d!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Enter m (modulus)>");
+    if (scanf("%llu", (unsigned long long*)&m) != 1)
+    {
+        printf("Invalid m!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (action == 1)
+    {
+        printf("Enter text>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t len = strlen(input);
+        if (len > 0 && input[len-1] == '\n')
+            input[len-1] = '\0';
+        len = strlen(input);
+
+        status = lcg_crypt((unsigned char*)input, len, x0, a, d, m, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (hex): ");
+            for (size_t i = 0; i < len; i++)
+                printf("%02X", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+    }
+    else
+    {
+        printf("Enter hex (no spaces, e.g. 1F0A07)> ");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t hex_len = strlen(input);
+        if (hex_len > 0 && input[hex_len-1] == '\n')
+            input[hex_len-1] = '\0';
+        hex_len = strlen(input);
+
+        if (hex_len % 2 != 0)
+        {
+            printf("Invalid hex: length must be even!\n");
+            return;
+        }
+
+        size_t data_len = hex_len / 2;
+        unsigned char* data = (unsigned char*)malloc(data_len);
+        if (!data)
+        {
+            printf("Memory error!\n");
+            return;
+        }
+
+        for (size_t i = 0; i < data_len; i++)
+        {
+            char byte_str[3] = {input[i*2], input[i*2+1], '\0'};
+            data[i] = (unsigned char)strtol(byte_str, NULL, 16);
+        }
+
+        status = lcg_crypt(data, data_len, x0, a, d, m, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (text): ");
+            for (size_t i = 0; i < data_len; i++)
+                printf("%c", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+
+        free(data);
+    }
+}
+
+void rc4_menu()
+{
+    char input[MAX_INPUT];
+    unsigned char key[2];
+    unsigned char* result = NULL;
+    enum crypto_status status;
+
+    printf("\n--- RC4 Stream Cipher (mod 8) ---\n");
+    printf("1. Encrypt (text -> hex)\n");
+    printf("2. Decrypt (hex -> text)\n");
+    printf("Select action> ");
+
+    int action;
+    if (scanf("%d", &action) != 1)
+    {
+        printf("Invalid input!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (action != 1 && action != 2)
+    {
+        printf("Invalid action!\n");
+        return;
+    }
+
+    int k0, k1;
+    printf("Enter K0 (0-7)> ");
+    if (scanf("%d", &k0) != 1 || k0 < 0 || k0 > 7)
+    {
+        printf("Invalid K0!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Enter K1 (0-7)>");
+    if (scanf("%d", &k1) != 1 || k1 < 0 || k1 > 7)
+    {
+        printf("Invalid K1!\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    key[0] = (unsigned char)k0;
+    key[1] = (unsigned char)k1;
+
+    if (action == 1)
+    {
+        printf("Enter text> ");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t len = strlen(input);
+        if (len > 0 && input[len-1] == '\n')
+            input[len-1] = '\0';
+        len = strlen(input);
+
+        status = rc4_crypt((unsigned char*)input, len, key, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (hex): ");
+            for (size_t i = 0; i < len; i++)
+                printf("%02X", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+    }
+    else
+    {
+        printf("Enter hex (no spaces, e.g. 1F0A07)>");
+        if (!fgets(input, MAX_INPUT, stdin))
+        {
+            printf("Failed to read input!\n");
+            return;
+        }
+        size_t hex_len = strlen(input);
+        if (hex_len > 0 && input[hex_len-1] == '\n')
+            input[hex_len-1] = '\0';
+        hex_len = strlen(input);
+
+        if (hex_len % 2 != 0)
+        {
+            printf("Invalid hex: length must be even!\n");
+            return;
+        }
+
+        size_t data_len = hex_len / 2;
+        unsigned char* data = (unsigned char*)malloc(data_len);
+        if (!data)
+        {
+            printf("Memory error!\n");
+            return;
+        }
+
+        for (size_t i = 0; i < data_len; i++)
+        {
+            char byte_str[3] = {input[i*2], input[i*2+1], '\0'};
+            data[i] = (unsigned char)strtol(byte_str, NULL, 16);
+        }
+
+        status = rc4_crypt(data, data_len, key, &result);
+
+        if (status == CRYPTO_SUCCESS)
+        {
+            printf("\nResult (text): ");
+            for (size_t i = 0; i < data_len; i++)
+                printf("%c", result[i]);
+            printf("\n");
+            free(result);
+        }
+        else
+            printf("\nError: %s\n", crypto_status_output(status));
+
+        free(data);
+    }
+}
+
 int main()
 {
     int choice;
@@ -691,6 +958,12 @@ int main()
                 break;
             case 7:
                 otp_menu();
+                break;
+            case 8:
+                lcg_menu();
+                break;
+            case 9:
+                rc4_menu();
                 break;
             case 0:
                 printf("\nExiting...\n");

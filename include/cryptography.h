@@ -16,5 +16,7 @@
 #include "crypto/vernam.h"
 #include "crypto/gamma.h"
 #include "crypto/otp.h"
+#include "crypto/lcg.h"
+#include "crypto/rc4.h"
 
 #endif
